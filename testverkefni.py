@@ -1,5 +1,8 @@
 #https://github.com/Thorsteinn19/hopverkefni170920
-def where2go(x,y): #Skilgreinir hvert hægt sé að fara
+def where2go(x,y):
+    '''
+    Skilgreinir hver hægt sé að fara
+    '''
     if x == 1 and y == 1:
         possible = 'n'
     elif x == 1 and y == 2:
@@ -17,7 +20,10 @@ def where2go(x,y): #Skilgreinir hvert hægt sé að fara
     elif x == 3 and y == 3:
         possible = 'sw'
     return possible
-def sentence_w2g(w2g): #Tekur gögn úr where2go og breytir því í setningu
+def sentence(w2g): 
+    '''
+    Tekur gögn úr where2go og breytir því í setningu
+    '''
     string = ''
     for i in w2g:
         if i == 'n':
@@ -32,33 +38,39 @@ def sentence_w2g(w2g): #Tekur gögn úr where2go og breytir því í setningu
             string = string + ' or ' 
     string = string + '.'
     return string
-def move(loc,x,y): #Framkvæmir færslu ef hún er lögleg
-    if loc == 'n' and 'n' in where2go(x,y):
+def move(direction,x,y):
+    '''
+    Framkvæmir færslu ef hún er lögleg
+    '''
+    if direction == 'n' and 'n' in where2go(x,y):
         y += 1
-    if loc == 'e' and 'e' in where2go(x,y):
+    if direction == 'e' and 'e' in where2go(x,y):
         x += 1
-    if loc == 's' and 's' in where2go(x,y):
+    if direction == 's' and 's' in where2go(x,y):
         y -= 1
-    if loc == 'w' and 'w' in where2go(x,y):
+    if direction == 'w' and 'w' in where2go(x,y):
         x -= 1
     return str(x)+str(y)
-posx = 1
-posy = 1
+
+posX = 1
+posY = 1
 running = 1
 
 while running == 1:
-    print('You can travel: '+ sentence_w2g(where2go(posx,posy)))
-    pos = input('Direction: ').lower()
+    print('You can travel: '+ sentence(where2go(posX,posY)))
+    moveInp = input('Direction: ').lower()
 
-    prevx = posx
-    prevy = posy
+    prevX = posX
+    prevY = posY
 
-    posx = int(move(pos,posx,posy)[0])
-    posy = int(move(pos,posx,posy)[1])
+    posX = int(move(moveInp,posX,posY)[0])
+    posY = int(move(moveInp,posX,posY)[1])
 
-    if posx == prevx and posy == prevy: #Ef færsla er ekki lögleg, lætur forritið vita
+    #Ef færsla er ólögleg, lætur forritið vita
+    if posX == prevX and posY == prevY: 
         print('Not a valid direction!')
    
-    if posx == 3 and posy == 1: #Skilgreini vinningspunkt
+   #Skilgreini vinningspunkt
+    if posX == 3 and posY == 1:
         print('Victory!')
         break
