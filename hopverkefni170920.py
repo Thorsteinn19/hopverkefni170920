@@ -43,10 +43,20 @@ while win_bool == False:
         if i == "n":
             travel_str = travel_str + "(N)orth"
         elif i == "s":
-            travel_str = travel_str + " or (S)outh"
+            travel_str = travel_str + "(S)outh"
         elif i == "e":
-            travel_str = travel_str + " or (E)ast"
+            travel_str = travel_str + "(E)ast"
         elif i == "w":
-            travel_str = travel_str + " or (W)est"
+            travel_str = travel_str + "(W)est"
     print(travel_str)
-    
+    next_pos = input('Direction: ').lower()
+    if next_pos == 'n' and boundaries(posx_int,posy_int+1):
+        posy_int = north(posx_int,posy_int)
+    elif next_pos == 's' and boundaries(posx_int,posy_int-1):
+        posy_int = south(posx_int,posy_int)
+    elif next_pos == 'e' and boundaries(posx_int+1,posy_int):
+        posx_int = east(posx_int,posy_int)
+    elif next_pos == 'w' and boundaries(posx_int-1,posy_int):
+        posx_int = west(posx_int,posy_int)
+    else:
+        print('Not a valid direction')
