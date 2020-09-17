@@ -13,6 +13,8 @@ def west(x,y):
     x -= 1
     return x
 def boundaries(x,y,direction):
+    #Kanna bannfærslur í hniti x,y
+    #1,1-2,1 ; 2,1 - 3,1 ; 2,2-3,2 ; 2,2 -2,3 ; færslur bannaðar utan 1<= x,y <=3
     if x == 1 and y == 1 and (direction == "e" or direction == "s" or direction == "w"):
         return False
     elif x == 1 and y == 2 and (direction == "w"):
@@ -30,8 +32,6 @@ def boundaries(x,y,direction):
     elif x == 3 and y == 3 and (direction == "n" or direction == "e"):
         return False
     return True
-
-
 def direction(x,y):
     direction_str=""
     if boundaries(x,y,"n"):
@@ -43,17 +43,15 @@ def direction(x,y):
     if boundaries(x,y,"w"):
         direction_str= direction_str + "w"
 
-    return direction_str
-    
-
-#Skilgreina banngildisfærslur 
-#1,1-2,1 ; 2,1 - 3,1 ; 2,2-3,2 ; 2,2 -2,3 ; færslur leifðar innan 1<= x,y <=3
+    return direction_str  
 posx_int=1
 posy_int=1
 win_bool = False
 while win_bool == False:
+
     directions_str=direction(posx_int,posy_int)
     travel_str = "You can travel: "
+    
     for i in directions_str:
         
         if i == "n":
@@ -78,7 +76,7 @@ while win_bool == False:
     elif next_pos == 'w' and boundaries(posx_int,posy_int,next_pos):
         posx_int = west(posx_int,posy_int)
     else:
-        print('Not a valid direction')
+        print('Not a valid direction!')
     
     if posx_int == 3 and posy_int == 1:
         print("Victory!")
