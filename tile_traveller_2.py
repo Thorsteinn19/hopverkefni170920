@@ -54,7 +54,7 @@ def coin_locator(row,col,coin_counter):
 def pop_coin(col,row):
 
     if (col,row) in coin_list:
-        
+
         coin_list.remove((col,row))
 
 def find_directions(col, row):
@@ -93,16 +93,25 @@ def play_one_move(col, row, valid_directions):
         victory = is_victory(col, row)
     return victory, col, row
 
-# The main program starts here
-victory = False
-row = 1
-col = 1
-coin_list = [(1,2),(2,2),(2,3),(3,2)]
-coins = 0
+def play_again():
+    play = input("Play again (y/n):")
+    if play == "y":
+        return True
+    else:
+        return False
 
-while not victory:
-    coins = coin_locator(row,col,coins)
-    valid_directions = find_directions(col, row)
-    print_directions(valid_directions)
-    victory, col, row = play_one_move(col, row, valid_directions)
-print("Victory! Total coins {}.".format(coins))
+# The main program starts here
+play = True
+while play:
+    victory = False
+    row = 1
+    col = 1
+    coin_list = [(1,2),(2,2),(2,3),(3,2)]
+    coins = 0  
+    while not victory:
+        coins = coin_locator(row,col,coins)
+        valid_directions = find_directions(col, row)
+        print_directions(valid_directions)
+        victory, col, row = play_one_move(col, row, valid_directions)
+    print("Victory! Total coins {}.".format(coins))
+    play = play_again()
