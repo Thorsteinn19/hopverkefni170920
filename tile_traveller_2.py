@@ -1,66 +1,9 @@
 import random
-
 # Constants
 NORTH = 'n'
 EAST = 'e'
 SOUTH = 's'
 WEST = 'w'
-YES = 'y'
-NO = 'n' 
-
-
-def move(direction, col, row):
-    ''' Returns updated col, row given the direction '''
-    if direction == NORTH:
-        row += 1
-    elif direction == SOUTH:
-        row -= 1
-    elif direction == EAST:
-        col += 1
-    elif direction == WEST:
-        col -= 1
-    return(col, row)    
-
-def is_victory(col, row):
-    ''' Return true if player is in the victory cell '''
-    return col == 3 and row == 1 # (3,1)
-
-def print_directions(directions_str):
-    print("You can travel: ", end='')
-    first = True
-    for ch in directions_str:
-        if not first:
-            print(" or ", end='')
-        if ch == NORTH:
-            print("(N)orth", end='')
-        elif ch == EAST:
-            print("(E)ast", end='')
-        elif ch == SOUTH:
-            print("(S)outh", end='')
-        elif ch == WEST:
-            print("(W)est", end='')
-        first = False
-    print(".")
-
-def coin_locator(row,col,coin_counter,seed):
-
-    if (col,row) in coin_list:
-
-        pull_lever = auto_lever(seed)
-
-        if pull_lever == "y":
-
-            coin_counter = coin_counter + 1
-            print("You received 1 coin, your total is now {}.".format(coin_counter))
-
-    return coin_counter
-
-def pop_coin(col,row):
-
-    if (col,row) in coin_list:
-
-        coin_list.remove((col,row))
-
 def find_directions(col, row):
     ''' Returns valid directions as a string given the supplied location '''
     if col == 1 and row == 1:   # (1,1)
@@ -80,52 +23,130 @@ def find_directions(col, row):
     elif col == 3 and row == 3: # (3,3)
         valid_directions = SOUTH+WEST
     return valid_directions
-
-def play_one_move(col, row, valid_directions,seed):
+def print_directions(directions_str):
+    '''Prinst available directions to travel to'''
+    print("You can travel: ", end='')
+    first = True
+    for ch in directions_str:
+        if not first:
+            print(" or ", end='')
+        if ch == NORTH:
+            print("(N)orth", end='')
+        elif ch == EAST:
+            print("(E)ast", end='')
+        elif ch == SOUTH:
+            print("(S)outh", end='')
+        elif ch == WEST:
+            print("(W)est", end='')
+        first = False
+    print(".")
+def play_one_move(col, row, valid_directions, random_picked):
     ''' Plays one move of the game
         Return if victory has been obtained and updated col,row '''
     victory = False
-    direction = auto_mover(col,row,seed)
-
+    if random_picked:
+        direction = random_directions()
+        print('Direction:', direction)
+    else:
+        direction = direction.lower()
+        direction = input("Direction:", direction)
     if not direction in valid_directions:
         print("Not a valid direction!")
-        if (col,row) in coin_list:
-            pop_coin(col,row)
+        direction_valid = False
     else:
         col, row = move(direction, col, row)
         victory = is_victory(col, row)
-    return victory, col, row
-
-def play_again():
-    play = input("Play again (y/n): ")
-    if play == "y":
+        direction_valid = True
+    return victory, col, row, direction_valid
+def move(direction, col, row):
+    ''' Returns updated col, row given the direction '''
+    if direction == NORTH:
+        row += 1
+    elif direction == SOUTH:
+        row -= 1
+    elif direction == EAST:
+        col += 1
+    elif direction == WEST:
+        col -= 1
+    return(col, row)
+def is_victory(col, row):
+    ''' Return true if player is in the victory cell '''
+    return col == 3 and row == 1 # (3,1)
+def lever_on_tile(col,row):
+    '''check if player is on a lever tile'''
+    lever = False
+    if col == 1 and row == 2:
+        lever = True
+    elif col == 2 and row == 2:
+        lever = True
+    elif col == 2 and row == 3:
+        lever = True
+    elif col == 3 and row == 2:
+        lever = True
+    return lever
+def lever_can_be_pulled(direction_valid):
+    '''Checks if direction was valid or invalid before'''
+    if direction_valid: # Comes from Play_one_move function
         return True
     else:
         return False
-
-def auto_mover(col,row,seed):
-    random.seed(seed)
-
-    dir_choice = random.choice([NORTH, EAST, SOUTH, WEST])
-    return dir_choice
-
-def auto_lever(seed):
-    random.seed(seed)
-       lever_choice = random.choice([YES, NO])
+def get_input_lever(random_picked):
+    '''Gets input wether player wants to pull lever'''
+    if random_picked:
+        pull_lever = random_pull_lever()
+        print('Pull a lever (y/n):', pull_lever)
+    else:
+        pull_lever = 'x'
+        first = True
+        while pull_lever not in 'yn':
+            if not first:
+                print('Invalid!')
+            pull_lever = input('Pull a lever (y/n): ').lower()
+            first = False
+    return pull_lever
+def random_directions():
+    return random.choice([NORTH,EAST,SOUTH,WEST])
+def random_pull_lever():
+    return random.choice(['y','n'])
+def pick_seed():
+    seed = int(input('Input seed: '))
+    return random.seed(seed)
+def get_input_random():
+    '''Gets input wether player wants to pull lever'''
+    rand_choice = 'x'
+    first = True
+    while rand_choice not in 'rs':
+        if not first:
+            print('Invalid!')
+        rand_choice = input('Play randomly or yourself (r/s): ').lower()
+        first = False
+    return rand_choice
 
 # The main program starts here
-play = True
-while play:
+def main():
     victory = False
+    direction_valid = True
+    coins = 0
     row = 1
     col = 1
-    coin_list = [(1,2),(2,2),(2,3),(3,2)]
-    coins = 0  
-    seed_value = input('Input seed: ')
+    random_picked = True
+    counter = 0
+    pick_seed()
     while not victory:
-        coins = coin_locator(row,col,coins,seed_value)
         valid_directions = find_directions(col, row)
+        # If player is on lever tile and direction was valid before
+        if lever_on_tile(col, row) and lever_can_be_pulled(direction_valid):
+            pull_lever = get_input_lever(random_picked)
+            # If player decides to pull lever
+            if pull_lever == 'y':
+                coins += 1
+                print('You received 1 coin, your total is now {}.'.format(coins))
         print_directions(valid_directions)
-        victory, col, row = play_one_move(col, row, valid_directions,seed_value)
-    print("Victory! Total coins {}.".format(coins))
-    play = play_again()
+        victory, col, row, direction_valid = play_one_move(col, row, valid_directions, random_picked)
+        counter += 1
+    print("Victory! Total coins {}. Moves {}.".format(coins, counter))
+play = 'y'
+while play == 'y':
+    #play_random = get_input_random():
+    main()
+    play = input('Play again (y/n): ')
