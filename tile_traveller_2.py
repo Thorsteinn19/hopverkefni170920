@@ -3,7 +3,6 @@ NORTH = 'n'
 EAST = 'e'
 SOUTH = 's'
 WEST = 'w'
-coin_list = [(1,2),(2,2),(2,3),(3,2)]
 
 def move(direction, col, row):
     ''' Returns updated col, row given the direction '''
@@ -94,7 +93,7 @@ def play_one_move(col, row, valid_directions):
     return victory, col, row
 
 def play_again():
-    play = input("Play again (y/n):")
+    play = input("Play again (y/n): ")
     if play == "y":
         return True
     else:
