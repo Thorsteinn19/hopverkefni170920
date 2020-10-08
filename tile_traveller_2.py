@@ -81,12 +81,12 @@ def find_directions(col, row):
         valid_directions = SOUTH+WEST
     return valid_directions
 
-def play_one_move(col, row, valid_directions,seed):
+def play_one_move(col, row, valid_directions,seed,move_counter):
     ''' Plays one move of the game
         Return if victory has been obtained and updated col,row '''
     victory = False
     direction = auto_mover(col,row,seed)
-
+    move_counter +=1
     if not direction in valid_directions:
         print("Not a valid direction!")
         if (col,row) in coin_list:
@@ -94,7 +94,7 @@ def play_one_move(col, row, valid_directions,seed):
     else:
         col, row = move(direction, col, row)
         victory = is_victory(col, row)
-    return victory, col, row
+    return victory, col, row, move_counter
 
 def play_again():
     play = input("Play again (y/n): ")
@@ -104,29 +104,31 @@ def play_again():
         return False
 
 def auto_mover(col,row,seed):
-    #random.seed(seed)
-
     dir_choice = random.choice([NORTH, EAST, SOUTH, WEST])
+    print("Direction:",dir_choice)
     return dir_choice
 
 def auto_lever(seed):
-    #random.seed(seed)
     lever_choice = random.choice([YES, NO])
+    print("Pull a lever (y/n): {}".format(lever_choice))
     return lever_choice
 
 # The main program starts here
 play = True
+
 while play:
     victory = False
+    seed_value = input('Input seed: ')
+    random.seed(seed_value)
+    moves = 0
     row = 1
     col = 1
     coin_list = [(1,2),(2,2),(2,3),(3,2)]
     coins = 0  
-    seed_value = int(input('Input seed: '))
     while not victory:
         coins = coin_locator(row,col,coins,seed_value)
         valid_directions = find_directions(col, row)
         print_directions(valid_directions)
-        victory, col, row = play_one_move(col, row, valid_directions,seed_value)
-    print("Victory! Total coins {}.".format(coins))
+        victory, col, row, moves = play_one_move(col, row, valid_directions,seed_value,moves)
+    print("Victory! Total coins {}. Moves {}.".format(coins,moves))
     play = play_again()
