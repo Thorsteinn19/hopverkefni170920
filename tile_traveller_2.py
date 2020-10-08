@@ -7,7 +7,7 @@ SOUTH = 's'
 WEST = 'w'
 YES = 'y'
 NO = 'n' 
-
+COIN_LIST = [(1,2),(2,2),(2,3),(3,2)]
 
 def move(direction, col, row):
     ''' Returns updated col, row given the direction '''
@@ -85,16 +85,18 @@ def play_one_move(col, row, valid_directions,seed,move_counter):
     ''' Plays one move of the game
         Return if victory has been obtained and updated col,row '''
     victory = False
+    lever_bool = True
     direction = auto_mover(col,row,seed)
     move_counter +=1
     if not direction in valid_directions:
         print("Not a valid direction!")
         if (col,row) in coin_list:
-            pop_coin(col,row)
+            lever_bool = False
     else:
         col, row = move(direction, col, row)
         victory = is_victory(col, row)
-    return victory, col, row, move_counter
+        
+    return victory, col, row, move_counter,lever_bool
 
 def play_again():
     play = input("Play again (y/n): ")
@@ -118,17 +120,20 @@ play = True
 
 while play:
     victory = False
-    seed_value = input('Input seed: ')
+    levers_bool = True
+    seed_value = int(input('Input seed: '))
     random.seed(seed_value)
     moves = 0
     row = 1
     col = 1
-    coin_list = [(1,2),(2,2),(2,3),(3,2)]
     coins = 0  
+    coin_list = [(1,2),(2,2),(2,3),(3,2)]
     while not victory:
-        coins = coin_locator(row,col,coins,seed_value)
+        if levers_bool:    
+            coins = coin_locator(row,col,coins,seed_value)
         valid_directions = find_directions(col, row)
         print_directions(valid_directions)
-        victory, col, row, moves = play_one_move(col, row, valid_directions,seed_value,moves)
+        victory, col, row, moves,levers_bool = play_one_move(col, row,\
+             valid_directions,seed_value,moves)
     print("Victory! Total coins {}. Moves {}.".format(coins,moves))
     play = play_again()
