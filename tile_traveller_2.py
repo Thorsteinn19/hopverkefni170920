@@ -3,6 +3,7 @@ NORTH = 'n'
 EAST = 'e'
 SOUTH = 's'
 WEST = 'w'
+coin_list = [(1,2),(2,2),(2,3),(3,2)]
 
 def move(direction, col, row):
     ''' Returns updated col, row given the direction '''
@@ -36,7 +37,26 @@ def print_directions(directions_str):
             print("(W)est", end='')
         first = False
     print(".")
+
+def coin_locator(row,col,coin_counter):
+
+    if (col,row) in coin_list:
+
+        pull_lever = input("Pull a lever (y/n): ")
+
+        if pull_lever == "y":
+
+            coin_counter = coin_counter + 1
+            print("You received 1 coin, your total is now {}.".format(coin_counter))
+
+    return coin_counter
+
+def pop_coin(col,row):
+
+    if (col,row) in coin_list:
         
+        coin_list.remove((col,row))
+
 def find_directions(col, row):
     ''' Returns valid directions as a string given the supplied location '''
     if col == 1 and row == 1:   # (1,1)
@@ -63,9 +83,11 @@ def play_one_move(col, row, valid_directions):
     victory = False
     direction = input("Direction: ")
     direction = direction.lower()
-    
+
     if not direction in valid_directions:
         print("Not a valid direction!")
+        if (col,row) in coin_list:
+            pop_coin(col,row)
     else:
         col, row = move(direction, col, row)
         victory = is_victory(col, row)
@@ -75,9 +97,12 @@ def play_one_move(col, row, valid_directions):
 victory = False
 row = 1
 col = 1
+coin_list = [(1,2),(2,2),(2,3),(3,2)]
+coins = 0
 
 while not victory:
+    coins = coin_locator(row,col,coins)
     valid_directions = find_directions(col, row)
     print_directions(valid_directions)
     victory, col, row = play_one_move(col, row, valid_directions)
-print("Victory!")
+print("Victory! Total coins {}.".format(coins))
