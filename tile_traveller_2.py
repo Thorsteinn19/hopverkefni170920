@@ -104,14 +104,15 @@ def play_again():
         return False
 
 def auto_mover(col,row,seed):
-    random.seed(seed)
+    #random.seed(seed)
 
     dir_choice = random.choice([NORTH, EAST, SOUTH, WEST])
     return dir_choice
 
 def auto_lever(seed):
-    random.seed(seed)
-       lever_choice = random.choice([YES, NO])
+    #random.seed(seed)
+    lever_choice = random.choice([YES, NO])
+    return lever_choice
 
 # The main program starts here
 play = True
@@ -121,7 +122,7 @@ while play:
     col = 1
     coin_list = [(1,2),(2,2),(2,3),(3,2)]
     coins = 0  
-    seed_value = input('Input seed: ')
+    seed_value = int(input('Input seed: '))
     while not victory:
         coins = coin_locator(row,col,coins,seed_value)
         valid_directions = find_directions(col, row)
